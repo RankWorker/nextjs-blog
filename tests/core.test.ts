@@ -162,6 +162,11 @@ describe("content primitives", () => {
 describe("paths and pagination", () => {
   it("normalizes configurable paths and creates encoded URLs", () => {
     expect(resolveBlogPaths({ basePath: "journal/" }).basePath).toBe("/journal");
+    expect(
+      resolveBlogPaths({
+        basePath: `${"/".repeat(100_000)}journal${"/".repeat(100_000)}`,
+      }).basePath,
+    ).toBe("/journal");
     expect(articlePath("/blog", "hello world")).toBe("/blog/hello%20world");
     expect(indexPagePath("/blog", 1)).toBe("/blog");
     expect(indexPagePath("/blog", 2)).toBe("/blog/page/2");

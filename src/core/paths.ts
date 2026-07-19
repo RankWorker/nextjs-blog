@@ -7,9 +7,18 @@ export type ResolvedBlogPaths = {
   webhookPath: string;
 };
 
+function trimBoundaryCharacter(value: string, character: string): string {
+  let start = 0;
+  let end = value.length;
+
+  while (start < end && value[start] === character) start += 1;
+  while (end > start && value[end - 1] === character) end -= 1;
+
+  return value.slice(start, end);
+}
+
 function normalizePath(value: string, label: string): string {
-  const trimmed = value.trim();
-  const path = `/${trimmed.replace(/^\/+|\/+$/g, "")}`;
+  const path = `/${trimBoundaryCharacter(value.trim(), "/")}`;
 
   if (path === "/" || path.includes("?") || path.includes("#")) {
     throw new RankWorkerBlogError(`${label} must be a non-root URL pathname.`, {
@@ -43,12 +52,13 @@ export function resolveBlogPaths(
 }
 
 export function slugifyTag(tag: string): string {
-  return tag
+  const slug = tag
     .normalize("NFKD")
     .replace(/\p{Diacritic}/gu, "")
     .toLowerCase()
-    .replace(/[^\p{Letter}\p{Number}]+/gu, "-")
-    .replace(/^-+|-+$/g, "");
+    .replace(/[^\p{Letter}\p{Number}]+/gu, "-");
+
+  return trimBoundaryCharacter(slug, "-");
 }
 
 export function articlePath(basePath: string, slug: string): string {
