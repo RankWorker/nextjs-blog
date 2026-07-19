@@ -110,7 +110,10 @@ jobs:
 
       - name: Publish with npm trusted publishing and provenance
         run: |
-          packages=(package-artifact/*.tgz)
-          test "${#packages[@]}" -eq 1
-          test -f "${packages[0]}"
+          shopt -s nullglob
+          packages=(./package-artifact/*.tgz)
+          if (( ${#packages[@]} != 1 )); then
+            echo "Expected exactly one package tarball, found ${#packages[@]}" >&2
+            exit 1
+          fi
           npm publish "${packages[0]}" --access public --provenance --ignore-scripts
