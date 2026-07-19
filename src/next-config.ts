@@ -6,22 +6,26 @@ const RANKWORKER_CDN_PATTERN = {
   pathname: "/**",
 };
 
+const PICSUM_PATTERN = {
+  protocol: "https" as const,
+  hostname: "picsum.photos",
+  pathname: "/**",
+};
+
+const DEFAULT_REMOTE_PATTERNS = [RANKWORKER_CDN_PATTERN, PICSUM_PATTERN];
+
 /** Adds the image settings required by RankWorker blog routes. */
 export function withRankWorkerBlog(config: NextConfig = {}): NextConfig {
   const remotePatterns = config.images?.remotePatterns ?? [];
-  const hasRankWorkerCdn = remotePatterns.some((pattern) => {
-    if (pattern instanceof URL)
-      return pattern.hostname === RANKWORKER_CDN_PATTERN.hostname;
-    return pattern.hostname === RANKWORKER_CDN_PATTERN.hostname;
-  });
+  const missingPatterns = DEFAULT_REMOTE_PATTERNS.filter(({ hostname }) =>
+    remotePatterns.every((pattern) => pattern.hostname !== hostname),
+  );
 
   return {
     ...config,
     images: {
       ...config.images,
-      remotePatterns: hasRankWorkerCdn
-        ? remotePatterns
-        : [...remotePatterns, RANKWORKER_CDN_PATTERN],
+      remotePatterns: [...remotePatterns, ...missingPatterns],
     },
   };
 }

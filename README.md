@@ -102,7 +102,9 @@ npx @rankworker/nextjs-blog init \
   --yes
 ```
 
-The generated `rankworker-blog.ts` uses a local source. Adjust the content directory if needed:
+The initializer creates `content/blog/welcome-to-your-blog.mdx` as a starter article
+with a placeholder cover from `picsum.photos`, and the generated `rankworker-blog.ts`
+uses that local source. Adjust the content directory if needed:
 
 ```ts
 import { createLocalMdxSource, defineBlog } from "@rankworker/nextjs-blog";
@@ -273,7 +275,10 @@ The generated blog layout imports the default stylesheet. Override its tokens an
 
 Or omit `@rankworker/nextjs-blog/styles.css` and provide a complete design.
 
-The default Next.js configuration helper allows images from `cdn.rankworker.com`. If local MDX or a custom content source references another remote image host, add that host to `images.remotePatterns` in the consuming application's Next.js configuration.
+The default Next.js configuration helper allows images from `cdn.rankworker.com` and
+the starter article's `picsum.photos` placeholder. If local MDX or a custom content
+source references another remote image host, add that host to `images.remotePatterns`
+in the consuming application's Next.js configuration.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 

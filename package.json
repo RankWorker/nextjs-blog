@@ -1,6 +1,6 @@
 {
   "name": "@rankworker/nextjs-blog",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "A production-ready, SEO-optimized, customizable Next.js blog powered by local MDX files or the RankWorker Direct API.",
   "keywords": [
     "rankworker",
