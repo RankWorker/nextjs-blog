@@ -56,7 +56,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        node-version: [20.9.0, 22, 24]
+        # Vitest 4 runs on Vite/Rolldown, which requires Node 20.19+ or 22.12+.
+        node-version: [20.19.0, 22, 24]
     steps:
       - name: Checkout
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
@@ -69,7 +70,7 @@ jobs:
           node-version: ${{ matrix.node-version }}
           package-manager-cache: false
 
-      # Node 20.9 uses an npm version that predates npm 11.15's --allow-* flags.
+      # Node 20 uses an npm version that predates npm 11.15's --allow-* flags.
       # The workflow-level ignore-scripts setting still applies to every entry.
       - name: Install dependencies without lifecycle scripts
         run: npm ci --ignore-scripts

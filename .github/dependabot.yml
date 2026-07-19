@@ -11,6 +11,20 @@ updates:
     groups:
       development-dependencies:
         dependency-type: development
+        # Keep routine updates together, but review breaking toolchain upgrades
+        # separately instead of letting one incompatible major block the group.
+        update-types:
+          - minor
+          - patch
+    # eslint-plugin-jsx-a11y 6.10.2 supports ESLint only through v9. Remove
+    # these guards once a release declares ESLint 10 peer compatibility.
+    ignore:
+      - dependency-name: eslint
+        update-types:
+          - version-update:semver-major
+      - dependency-name: "@eslint/js"
+        update-types:
+          - version-update:semver-major
   - package-ecosystem: github-actions
     directory: /
     schedule:
