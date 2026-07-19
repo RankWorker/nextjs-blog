@@ -127,7 +127,7 @@
   },
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.18.5",
-    "@changesets/cli": "^2.31.0",
+    "@changesets/cli": "^2.31.1",
     "@eslint/js": "^9.39.5",
     "@testing-library/react": "^16.3.2",
     "@types/mdx": "^2.0.14",
