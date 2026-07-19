@@ -13,10 +13,10 @@
   "homepage": "https://rankworker.github.io/nextjs-blog/",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/rankworker/nextjs-blog.git"
+    "url": "https://github.com/RankWorker/nextjs-blog"
   },
   "bugs": {
-    "url": "https://github.com/rankworker/nextjs-blog/issues"
+    "url": "https://github.com/RankWorker/nextjs-blog/issues"
   },
   "license": "MIT",
   "type": "module",

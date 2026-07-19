@@ -6,18 +6,18 @@
   <p align="center">
     A complete, customizable, SEO-optimized blog layer for Next.js.
     <br />
-    <a href="https://github.com/rankworker/nextjs-blog#usage"><strong>Explore the usage guide »</strong></a>
+    <a href="https://github.com/RankWorker/nextjs-blog#usage"><strong>Explore the usage guide »</strong></a>
     <br /><br />
-    <a href="https://github.com/rankworker/nextjs-blog/issues">Report bug</a>
+    <a href="https://github.com/RankWorker/nextjs-blog/issues">Report bug</a>
     ·
-    <a href="https://github.com/rankworker/nextjs-blog/issues">Request feature</a>
+    <a href="https://github.com/RankWorker/nextjs-blog/issues">Request feature</a>
   </p>
 
   <p>
-    <a href="https://github.com/rankworker/nextjs-blog/actions/workflows/quality.yml"><img src="https://github.com/rankworker/nextjs-blog/actions/workflows/quality.yml/badge.svg" alt="Quality" /></a>
+    <a href="https://github.com/RankWorker/nextjs-blog/actions/workflows/quality.yml"><img src="https://github.com/RankWorker/nextjs-blog/actions/workflows/quality.yml/badge.svg" alt="Quality" /></a>
     <a href="https://www.npmjs.com/package/@rankworker/nextjs-blog"><img src="https://img.shields.io/npm/v/%40rankworker%2Fnextjs-blog.svg" alt="npm version" /></a>
     <a href="https://www.npmjs.com/package/@rankworker/nextjs-blog"><img src="https://img.shields.io/npm/dm/%40rankworker%2Fnextjs-blog.svg" alt="npm downloads" /></a>
-    <a href="https://github.com/rankworker/nextjs-blog/blob/main/LICENSE"><img src="https://img.shields.io/github/license/rankworker/nextjs-blog.svg" alt="MIT License" /></a>
+    <a href="https://github.com/RankWorker/nextjs-blog/blob/main/LICENSE"><img src="https://img.shields.io/github/license/RankWorker/nextjs-blog.svg" alt="MIT License" /></a>
     <img src="https://img.shields.io/badge/coverage-%E2%89%A590%25-brightgreen.svg" alt="Coverage threshold: 90%" />
   </p>
 </div>
@@ -283,7 +283,7 @@ Contributions are welcome. Read [CONTRIBUTING.md](CONTRIBUTING.md), keep changes
 
 ### Top contributors
 
-<a href="https://github.com/rankworker/nextjs-blog/graphs/contributors">
+<a href="https://github.com/RankWorker/nextjs-blog/graphs/contributors">
   <img src="https://contrib.rocks/image?repo=rankworker/nextjs-blog" alt="Top contributors" />
 </a>
 
