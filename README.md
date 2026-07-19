@@ -15,9 +15,9 @@
 
   <p>
     <a href="https://github.com/RankWorker/nextjs-blog/actions/workflows/quality.yml"><img src="https://github.com/RankWorker/nextjs-blog/actions/workflows/quality.yml/badge.svg" alt="Quality" /></a>
-    <a href="https://www.npmjs.com/package/@rankworker/nextjs-blog"><img src="https://img.shields.io/npm/v/%40rankworker%2Fnextjs-blog.svg" alt="npm version" /></a>
-    <a href="https://www.npmjs.com/package/@rankworker/nextjs-blog"><img src="https://img.shields.io/npm/dm/%40rankworker%2Fnextjs-blog.svg" alt="npm downloads" /></a>
-    <a href="https://github.com/RankWorker/nextjs-blog/blob/main/LICENSE"><img src="https://img.shields.io/github/license/RankWorker/nextjs-blog.svg" alt="MIT License" /></a>
+    <a href="https://www.npmjs.com/package/@rankworker/nextjs-blog"><img src="https://img.shields.io/npm/v/@rankworker/nextjs-blog" alt="npm version" /></a>
+    <a href="https://www.npmjs.com/package/@rankworker/nextjs-blog"><img src="https://img.shields.io/npm/dm/@rankworker/nextjs-blog" alt="npm downloads" /></a>
+    <a href="https://github.com/RankWorker/nextjs-blog/blob/main/LICENSE"><img src="https://img.shields.io/github/license/RankWorker/nextjs-blog" alt="MIT License" /></a>
     <img src="https://img.shields.io/badge/coverage-%E2%89%A590%25-brightgreen.svg" alt="Coverage threshold: 90%" />
   </p>
 </div>
