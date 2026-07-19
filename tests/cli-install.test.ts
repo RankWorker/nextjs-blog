@@ -3,6 +3,7 @@ import os from "node:os";
 import path from "node:path";
 
 import { describe, expect, it, vi } from "vitest";
+import packageMetadata from "../package.json" with { type: "json" };
 
 const { once, spawn } = vi.hoisted(() => ({
   once: vi.fn(),
@@ -19,8 +20,8 @@ import {
 
 describe("CLI dependency installation", () => {
   it("uses the executing package version for self-installation", async () => {
-    await expect(currentPackageSpec()).resolves.toMatch(
-      /^@rankworker\/nextjs-blog@\d+\.\d+\.\d+$/,
+    await expect(currentPackageSpec()).resolves.toBe(
+      `${packageMetadata.name}@${packageMetadata.version}`,
     );
   });
 
