@@ -1,0 +1,147 @@
+name: CI
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+
+# CI never needs to modify the repository. Keep this explicit so changes to the
+# repository's default GITHUB_TOKEN permissions cannot silently widen access.
+permissions:
+  contents: read
+
+env:
+  # Dependency lifecycle scripts are an avoidable arbitrary-code-execution path.
+  # Project scripts invoked explicitly with `npm run` still work with this set.
+  NPM_CONFIG_IGNORE_SCRIPTS: "true"
+  NPM_CONFIG_FUND: "false"
+  NPM_CONFIG_UPDATE_NOTIFIER: "false"
+
+jobs:
+  quality:
+    name: Code quality
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          persist-credentials: false
+
+      - name: Set up Node.js
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 24
+          package-manager-cache: false
+
+      - name: Install dependencies without lifecycle scripts
+        run: npm ci --allow-git=none --allow-remote=none --allow-file=none --allow-directory=none
+
+      - name: Check formatting
+        run: npm run format
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Type-check
+        run: npm run typecheck
+
+      - name: Detect unused code and dependencies
+        run: npm run knip
+
+  test:
+    name: Tests (Node.js ${{ matrix.node-version }})
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        node-version: [20.9.0, 22, 24]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          persist-credentials: false
+
+      - name: Set up Node.js
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: ${{ matrix.node-version }}
+          package-manager-cache: false
+
+      # Node 20.9 uses an npm version that predates npm 11.15's --allow-* flags.
+      # The workflow-level ignore-scripts setting still applies to every entry.
+      - name: Install dependencies without lifecycle scripts
+        run: npm ci --ignore-scripts
+
+      - name: Run tests with coverage thresholds
+        run: npm run test:coverage
+
+  package:
+    name: Build and validate package
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          persist-credentials: false
+
+      - name: Set up Node.js
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 24
+          package-manager-cache: false
+
+      - name: Install dependencies without lifecycle scripts
+        run: npm ci --allow-git=none --allow-remote=none --allow-file=none --allow-directory=none
+
+      - name: Build
+        run: npm run build
+
+      - name: Validate package exports
+        run: |
+          npm run publint
+          npm run attw
+          npm run check:next-config
+          npm run check:faq-client
+
+      - name: Preview published files
+        run: npm pack --dry-run --ignore-scripts
+
+  # Audit the complete lockfile on every commit, including newly disclosed
+  # vulnerabilities when no dependency file changed.
+  sca:
+    name: Full dependency audit
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          persist-credentials: false
+
+      - name: Set up Node.js
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 24
+          package-manager-cache: false
+
+      - name: Install dependencies without lifecycle scripts
+        run: npm ci --allow-git=none --allow-remote=none --allow-file=none --allow-directory=none
+
+      - name: Audit production and development dependencies
+        run: npm audit --audit-level=moderate
+
+  # On pull requests, separately reject vulnerable dependencies introduced by
+  # the proposed diff before they enter the protected branch.
+  dependency-review:
+    name: PR dependency review
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Reject newly introduced vulnerable dependencies
+        uses: actions/dependency-review-action@a1d282b36b6f3519aa1f3fc636f609c47dddb294 # v5.0.0
+        with:
+          fail-on-severity: moderate

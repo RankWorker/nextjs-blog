@@ -1,0 +1,157 @@
+{
+  "name": "@rankworker/nextjs-blog",
+  "version": "1.0.0",
+  "description": "A production-ready, SEO-optimized, customizable Next.js blog powered by local MDX files or the RankWorker Direct API.",
+  "keywords": [
+    "rankworker",
+    "nextjs",
+    "blog",
+    "mdx",
+    "seo",
+    "isr"
+  ],
+  "homepage": "https://rankworker.github.io/nextjs-blog/",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rankworker/nextjs-blog.git"
+  },
+  "bugs": {
+    "url": "https://github.com/rankworker/nextjs-blog/issues"
+  },
+  "license": "MIT",
+  "type": "module",
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "CHANGELOG.md",
+    "LICENSE"
+  ],
+  "sideEffects": [
+    "**/*.css"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./app": {
+      "types": "./dist/app.d.ts",
+      "import": "./dist/app.js"
+    },
+    "./components": {
+      "types": "./dist/components.d.ts",
+      "import": "./dist/components.js"
+    },
+    "./faq": {
+      "types": "./dist/faq.d.ts",
+      "import": "./dist/faq.js"
+    },
+    "./next-config": {
+      "import": {
+        "types": "./dist/next-config.d.ts",
+        "default": "./dist/next-config.js"
+      },
+      "require": {
+        "types": "./dist/next-config.d.cts",
+        "default": "./dist/next-config.cjs"
+      }
+    },
+    "./static": {
+      "types": "./dist/static.d.ts",
+      "import": "./dist/static.js"
+    },
+    "./static-app": {
+      "types": "./dist/static-app.d.ts",
+      "import": "./dist/static-app.js"
+    },
+    "./styles.css": {
+      "types": "./dist/styles.d.ts",
+      "default": "./dist/styles.css"
+    },
+    "./package.json": "./package.json"
+  },
+  "bin": {
+    "rankworker-blog": "./dist/cli.js"
+  },
+  "engines": {
+    "node": ">=20.9"
+  },
+  "scripts": {
+    "build": "npm run clean && tsup && node scripts/finalize-client-entries.mjs",
+    "clean": "node scripts/clean.mjs",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint . --max-warnings 0",
+    "format": "prettier --check .",
+    "format:write": "prettier --write .",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "knip": "knip",
+    "publint": "publint",
+    "attw": "node scripts/check-package-types.mjs",
+    "check:next-config": "node scripts/check-next-config-require.mjs",
+    "check:faq-client": "node scripts/check-faq-client-entry.mjs",
+    "check:release-tag": "node scripts/check-release-tag.mjs",
+    "check": "npm run format && npm run lint && npm run typecheck && npm run test:coverage && npm run build && npm run publint && npm run attw && npm run check:next-config && npm run check:faq-client && npm run knip",
+    "changeset": "changeset",
+    "version-packages": "changeset version",
+    "release": "npm run build && changeset publish",
+    "prepublishOnly": "npm run check"
+  },
+  "peerDependencies": {
+    "next": ">=16.0.0 <17",
+    "react": ">=19.2.0 <20",
+    "react-dom": ">=19.2.0 <20"
+  },
+  "dependencies": {
+    "@clack/prompts": "^1.7.0",
+    "fast-glob": "^3.3.3",
+    "github-slugger": "^2.0.0",
+    "gray-matter": "^4.0.3",
+    "mdast-util-to-string": "^4.0.0",
+    "next-mdx-remote": "^6.0.0",
+    "picocolors": "^1.1.1",
+    "reading-time": "^1.5.0",
+    "rehype-autolink-headings": "^7.1.0",
+    "rehype-slug": "^6.0.0",
+    "remark-gfm": "^4.0.1",
+    "remark-mdx": "^3.1.1",
+    "remark-parse": "^11.0.0",
+    "unified": "^11.0.5",
+    "unist-util-visit": "^5.1.0",
+    "zod": "^4.4.3"
+  },
+  "devDependencies": {
+    "@arethetypeswrong/cli": "^0.18.5",
+    "@changesets/cli": "^2.31.0",
+    "@eslint/js": "^9.39.5",
+    "@testing-library/react": "^16.3.2",
+    "@types/mdx": "^2.0.14",
+    "@types/node": "^26.1.1",
+    "@types/react": "^19.2.17",
+    "@types/react-dom": "^19.2.3",
+    "@vitest/coverage-v8": "^4.1.10",
+    "eslint": "^9.39.5",
+    "eslint-plugin-jsx-a11y": "^6.10.2",
+    "eslint-plugin-react-hooks": "^7.1.1",
+    "jsdom": "^29.1.1",
+    "knip": "^6.27.0",
+    "next": "^16.2.10",
+    "prettier": "^3.9.5",
+    "publint": "^0.3.21",
+    "react": "^19.2.7",
+    "react-dom": "^19.2.7",
+    "tsup": "^8.5.1",
+    "typescript": "^6.0.3",
+    "typescript-eslint": "^8.64.0",
+    "vitest": "^4.1.10"
+  },
+  "overrides": {
+    "esbuild": "^0.28.1",
+    "postcss": "^8.5.10"
+  }
+}
