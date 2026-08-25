@@ -70,6 +70,35 @@ describe("local MDX source", () => {
 });
 
 describe("RankWorker Direct API source", () => {
+  it("requests the largest supported API page by default", async () => {
+    const fetch = vi.fn(async (url: string) => {
+      const size = Number(new URL(url).searchParams.get("size"));
+      return Response.json({
+        content: [],
+        page: {
+          number: 0,
+          size,
+          totalElements: 0,
+          totalPages: 0,
+          first: true,
+          last: true,
+          hasNext: false,
+          hasPrevious: false,
+        },
+      });
+    });
+    const source = createRankWorkerSource({
+      apiKey: "secret",
+      fetch: fetch as typeof globalThis.fetch,
+    });
+
+    await source.listArticles();
+
+    expect(new URL(String(fetch.mock.calls[0]?.[0])).searchParams.get("size")).toBe(
+      "60",
+    );
+  });
+
   it("caches a default-fetch article indefinitely with the collection tag", async () => {
     const fetch = vi.fn(async (_url: string, _init?: RequestInit) =>
       Response.json(apiArticle(7, "cached")),

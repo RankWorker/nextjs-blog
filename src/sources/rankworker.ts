@@ -5,7 +5,7 @@ import type { BlogArticle, BlogSource } from "../core/types.js";
 import { validateArticleCollection } from "../core/validate.js";
 
 const DEFAULT_API_URL = "https://api.rankworker.com/api/v1";
-const DEFAULT_PAGE_SIZE = 9;
+const DEFAULT_PAGE_SIZE = 60;
 const DEFAULT_TIMEOUT_MS = 15_000;
 const MAX_PAGES = 10_000;
 

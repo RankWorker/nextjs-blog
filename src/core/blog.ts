@@ -37,7 +37,22 @@ export type ResolvedBlogDefinition = {
   ): Promise<BlogIndexView | null>;
   getArticle(slug: string): Promise<BlogArticle | null>;
   getArticles(): Promise<readonly BlogArticle[]>;
+  getTagDefinitions(): Promise<readonly BlogTagDefinition[]>;
 };
+
+type BlogTagDefinition = {
+  name: string;
+  slug: string;
+  count: number;
+};
+
+type BlogCatalog = {
+  articles: readonly BlogArticle[];
+  articlesBySlug: ReadonlyMap<string, BlogArticle>;
+  tags: readonly BlogTagDefinition[];
+};
+
+const PRODUCTION_BUILD_PHASE = "phase-production-build";
 
 type DefinitionDependencies = {
   components: ResolvedBlogComponents;
@@ -56,10 +71,46 @@ export function createBlogDefinition(
     "paginationWindow",
   );
 
+  let buildCatalogPromise: Promise<BlogCatalog> | undefined;
+
+  async function loadCatalog(): Promise<BlogCatalog> {
+    const articles = validateArticleCollection(
+      await input.source.listArticles(),
+    ).toSorted((first, second) => second.date.getTime() - first.date.getTime());
+    return {
+      articles,
+      articlesBySlug: new Map(articles.map((article) => [article.slug, article])),
+      tags: collectTagDefinitions(articles),
+    };
+  }
+
+  function getBuildCatalog(): Promise<BlogCatalog> {
+    buildCatalogPromise ??= loadCatalog().catch((error: unknown) => {
+      buildCatalogPromise = undefined;
+      throw error;
+    });
+    return buildCatalogPromise;
+  }
+
+  function getCatalog(): Promise<BlogCatalog> {
+    return process.env.NEXT_PHASE === PRODUCTION_BUILD_PHASE
+      ? getBuildCatalog()
+      : loadCatalog();
+  }
+
   async function getArticles(): Promise<readonly BlogArticle[]> {
-    return validateArticleCollection(await input.source.listArticles()).toSorted(
-      (first, second) => second.date.getTime() - first.date.getTime(),
-    );
+    return (await getCatalog()).articles;
+  }
+
+  async function getArticle(slug: string): Promise<BlogArticle | null> {
+    if (process.env.NEXT_PHASE !== PRODUCTION_BUILD_PHASE) {
+      return input.source.getArticle(slug);
+    }
+    return (await getBuildCatalog()).articlesBySlug.get(slug) ?? null;
+  }
+
+  async function getTagDefinitions(): Promise<readonly BlogTagDefinition[]> {
+    return (await getCatalog()).tags;
   }
 
   async function getIndexView(
@@ -69,8 +120,9 @@ export function createBlogDefinition(
   ): Promise<BlogIndexView | null> {
     if (!Number.isSafeInteger(page) || page < 1) return null;
 
-    const articles = prefetchedArticles ?? (await getArticles());
-    const tags = collectTagDefinitions(articles);
+    const catalog = prefetchedArticles ? undefined : await getCatalog();
+    const articles = prefetchedArticles ?? catalog?.articles ?? [];
+    const tags = catalog?.tags ?? collectTagDefinitions(articles);
     const selected = requestedTagSlug
       ? tags.find((tag) => tag.slug === requestedTagSlug)
       : undefined;
@@ -119,8 +171,9 @@ export function createBlogDefinition(
     dangerouslyAllowMdxJavaScript: input.dangerouslyAllowMdxJavaScript ?? false,
     webhook: input.webhook,
     getIndexView,
-    getArticle: (slug) => input.source.getArticle(slug),
+    getArticle,
     getArticles,
+    getTagDefinitions,
   };
 }
 

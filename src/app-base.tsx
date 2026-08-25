@@ -4,7 +4,6 @@ import type { ReactElement } from "react";
 
 import {
   articleCanonicalUrl,
-  collectTagDefinitions,
   createBlogDefinition,
   type ResolvedBlogDefinition,
 } from "./core/blog.js";
@@ -42,8 +41,7 @@ export function createBlogApp(input: DefineBlogConfig): RankWorkerBlog {
   const getUncachedArticles = definition.getArticles.bind(definition);
   const getUncachedArticle = definition.getArticle.bind(definition);
   async function getIndex(input: { page?: number; tag?: string } = {}) {
-    const allArticles = await getUncachedArticles();
-    return definition.getIndexView(input.page, input.tag, allArticles);
+    return definition.getIndexView(input.page, input.tag);
   }
 
   async function renderIndex(input: { page?: number; tag?: string } = {}) {
@@ -68,10 +66,7 @@ export function createBlogApp(input: DefineBlogConfig): RankWorkerBlog {
     const article = await getUncachedArticle(slug);
     if (!article) notFound();
     const tagSlugs = new Map(
-      collectTagDefinitions(await getUncachedArticles()).map((tag) => [
-        tag.name,
-        tag.slug,
-      ]),
+      (await definition.getTagDefinitions()).map((tag) => [tag.name, tag.slug]),
     );
     const Layout = components.Layout;
     const Article = components.ArticlePage;
@@ -141,13 +136,12 @@ export function createBlogApp(input: DefineBlogConfig): RankWorkerBlog {
       }));
     },
     async generateTagStaticParams() {
-      return collectTagDefinitions(await articles()).map(({ slug: tag }) => ({
+      return (await definition.getTagDefinitions()).map(({ slug: tag }) => ({
         tag,
       }));
     },
     async generateTagPageStaticParams() {
-      const all = await articles();
-      return collectTagDefinitions(all).flatMap(({ slug: tag, count }) => {
+      return (await definition.getTagDefinitions()).flatMap(({ slug: tag, count }) => {
         return Array.from(
           { length: Math.max(0, Math.ceil(count / definition.pageSize) - 1) },
           (_, index) => ({ tag, page: String(index + 2) }),

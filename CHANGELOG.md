@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.1.1
+
+### Patch Changes
+
+- Reuse the normalized article catalog across production-build routes and request
+  larger RankWorker API pages to prevent blog build times from growing quadratically.
+
 ## 1.1.0
 
 ### Minor Changes

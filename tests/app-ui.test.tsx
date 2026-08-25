@@ -76,6 +76,7 @@ import { article } from "./fixtures.js";
 describe("App Router integration and default presentation", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    vi.unstubAllEnvs();
     scheduled.length = 0;
   });
 
@@ -208,6 +209,46 @@ describe("App Router integration and default presentation", () => {
       robots: { index: false },
     });
     await expect(blog.renderIndex({ page: 99 })).rejects.toThrow("NEXT_NOT_FOUND");
+  });
+
+  it("reuses the article catalog across production-build routes", async () => {
+    vi.stubEnv("NEXT_PHASE", "phase-production-build");
+    const values = [
+      article({ id: "1", slug: "first", tags: ["Engineering"] }),
+      article({ id: "2", slug: "second", tags: ["Design"] }),
+    ];
+    const listArticles = vi.fn(async () => values);
+    const getArticle = vi.fn(
+      async (slug: string) => values.find((value) => value.slug === slug) ?? null,
+    );
+    const blog = defineBlog({
+      source: { kind: "rankworker", listArticles, getArticle },
+      site: { url: "https://example.com", name: "Example" },
+    });
+
+    await blog.generateArticleStaticParams();
+    await blog.generateArticleMetadata("second");
+    await blog.renderArticle("second");
+    await blog.generateTagStaticParams();
+
+    expect(listArticles).toHaveBeenCalledTimes(1);
+    expect(getArticle).not.toHaveBeenCalled();
+  });
+
+  it("keeps article sources fresh outside production builds", async () => {
+    const listArticles = vi.fn(async () => [article()]);
+    const getArticle = vi.fn(async () => article());
+    const blog = defineBlog({
+      source: { kind: "rankworker", listArticles, getArticle },
+      site: { url: "https://example.com", name: "Example" },
+    });
+
+    await blog.getArticles();
+    await blog.getArticles();
+    await blog.generateArticleMetadata("a-useful-article");
+
+    expect(listArticles).toHaveBeenCalledTimes(2);
+    expect(getArticle).toHaveBeenCalledTimes(1);
   });
 
   it("allows component and MDX overrides without copying templates", () => {
